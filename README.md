@@ -2,7 +2,8 @@
 
 # Home
 
-Olá, acesse o site clicando [aqui](https://forevit.github.io/Home/)
+Olá, acesse o site clicando [aqui](https://forevit.github.io/Home/).
+
 Gostou do site? Gostaria de ver mais? clique [aqui](https://www.linkedin.com/in/carloseduardorodriguesferreira/) para acessar meu Linkedin.
 
 Isso é apenas um estudante com poucas habilidades em front-end tentando desenvolver um site. 

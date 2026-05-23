@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eduardo Ferreira — TI & Infra</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --accent: #38bdf8;
+      --accent2: #818cf8;
+      --accent3: #34d399;
+      --glass: rgba(255,255,255,0.06);
+      --glass-border: rgba(255,255,255,0.12);
+      --glass-hover: rgba(255,255,255,0.1);
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --bg1: #050a1a;
+      --bg2: #0a0f24;
+      --radius: 16px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: var(--bg1);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ─── ANIMATED BG ─── */
+    .bg-orbs {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.35;
+      animation: drift 18s ease-in-out infinite alternate;
+    }
+    .orb1 { width: 600px; height: 600px; background: radial-gradient(circle, #1e40af, transparent); top: -150px; left: -100px; animation-delay: 0s; }
+    .orb2 { width: 500px; height: 500px; background: radial-gradient(circle, #4f46e5, transparent); top: 200px; right: -100px; animation-delay: -6s; }
+    .orb3 { width: 400px; height: 400px; background: radial-gradient(circle, #0891b2, transparent); bottom: 100px; left: 30%; animation-delay: -12s; }
+    .orb4 { width: 350px; height: 350px; background: radial-gradient(circle, #059669, transparent); bottom: -80px; right: 10%; animation-delay: -4s; }
+    @keyframes drift {
+      from { transform: translate(0,0) scale(1); }
+      to   { transform: translate(40px,30px) scale(1.08); }
+    }
+
+    /* ─── LAYOUT ─── */
+    main { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; padding: 0 24px 80px; }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; justify-content: center; gap: 8px;
+      padding: 16px 24px;
+      background: rgba(5,10,26,0.6);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--glass-border);
+    }
+    nav a {
+      color: var(--muted); text-decoration: none; font-size: 13px;
+      font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase;
+      padding: 6px 14px; border-radius: 20px;
+      transition: color .2s, background .2s;
+    }
+    nav a:hover { color: var(--accent); background: rgba(56,189,248,0.08); }
+
+    /* ─── GLASS CARD ─── */
+    .card {
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      transition: border-color .3s, transform .3s;
+    }
+    .card:hover { border-color: rgba(255,255,255,0.2); }
+
+    /* ─── HERO ─── */
+    #hero {
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      text-align: center; padding-top: 80px;
+    }
+    .hero-inner { max-width: 640px; }
+
+    .avatar-wrap {
+      position: relative; display: inline-block; margin-bottom: 28px;
+    }
+    .avatar-ring {
+      width: 120px; height: 120px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      padding: 3px; margin: 0 auto;
+    }
+    .avatar-ring img {
+      width: 100%; height: 100%; border-radius: 50%;
+      object-fit: cover; display: block;
+    }
+    .avatar-fallback {
+      width: 100%; height: 100%; border-radius: 50%;
+      background: linear-gradient(135deg, #1e3a5f, #312e81);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 36px; font-weight: 700; color: var(--accent);
+    }
+    .status-dot {
+      position: absolute; bottom: 6px; right: 6px;
+      width: 14px; height: 14px; border-radius: 50%;
+      background: var(--accent3); border: 2px solid var(--bg1);
+    }
+
+    .hero-name {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 700; line-height: 1.15;
+      background: linear-gradient(135deg, #fff 40%, var(--accent));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 12px;
+    }
+    .hero-role {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px; color: var(--accent); margin-bottom: 16px;
+      letter-spacing: 0.05em;
+    }
+    .hero-role span { color: var(--muted); }
+    .hero-desc { font-size: 16px; color: var(--muted); line-height: 1.7; margin-bottom: 36px; }
+
+    .pill-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 36px; }
+    .pill {
+      font-size: 12px; font-weight: 500; padding: 5px 14px;
+      border-radius: 20px; border: 1px solid var(--glass-border);
+      background: var(--glass); color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .socials { display: flex; gap: 16px; justify-content: center; }
+    .social-btn {
+      display: flex; align-items: center; gap: 8px;
+      text-decoration: none; color: var(--muted); font-size: 14px;
+      padding: 10px 20px; border-radius: 10px;
+      border: 1px solid var(--glass-border); background: var(--glass);
+      transition: color .2s, border-color .2s, background .2s;
+    }
+    .social-btn:hover { color: var(--text); border-color: var(--accent); background: rgba(56,189,248,0.08); }
+    .social-btn svg { width: 18px; height: 18px; fill: currentColor; flex-shrink: 0; }
+
+    /* ─── SECTION ─── */
+    section { padding-top: 96px; }
+    .section-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 8px;
+    }
+    .section-title {
+      font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 700;
+      margin-bottom: 32px; color: var(--text);
+    }
+
+    /* ─── ABOUT ─── */
+    .about-card { padding: 32px; }
+    .about-card p { color: var(--muted); line-height: 1.8; font-size: 15px; }
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 28px; }
+    @media(max-width:540px){ .about-grid { grid-template-columns: 1fr; } }
+    .about-stat { padding: 20px 24px; border-radius: 12px; background: rgba(255,255,255,0.04); border: 1px solid var(--glass-border); }
+    .about-stat-num { font-size: 28px; font-weight: 700; color: var(--accent); font-family: 'JetBrains Mono', monospace; }
+    .about-stat-label { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+    /* ─── EXPERIENCE ─── */
+    .timeline { display: flex; flex-direction: column; gap: 16px; }
+    .job-card { padding: 24px 28px; position: relative; overflow: hidden; }
+    .job-card::before {
+      content: ''; position: absolute; top: 0; left: 0; bottom: 0; width: 3px;
+      background: linear-gradient(to bottom, var(--accent), var(--accent2));
+      border-radius: 2px;
+    }
+    .job-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
+    .job-title { font-weight: 600; font-size: 16px; }
+    .job-period { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent); padding: 3px 10px; border-radius: 20px; background: rgba(56,189,248,0.08); border: 1px solid rgba(56,189,248,0.2); white-space: nowrap; }
+    .job-company { color: var(--accent2); font-size: 14px; margin-bottom: 12px; }
+    .job-desc { color: var(--muted); font-size: 14px; line-height: 1.7; }
+    .job-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+    .tag { font-size: 11px; font-family: 'JetBrains Mono', monospace; color: var(--muted); padding: 3px 10px; border-radius: 6px; background: rgba(255,255,255,0.04); border: 1px solid var(--glass-border); }
+
+    /* ─── EDUCATION / CERTS ─── */
+    .edu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+    .edu-card { padding: 22px 24px; }
+    .edu-icon { font-size: 24px; margin-bottom: 12px; }
+    .edu-name { font-weight: 600; font-size: 15px; margin-bottom: 4px; }
+    .edu-sub { font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+    .edu-period { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent2); }
+
+    /* ─── PROJECTS ─── */
+    .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+    .project-card { padding: 24px; cursor: default; }
+    .project-card:hover { transform: translateY(-3px); }
+    .project-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+    .project-icon { font-size: 22px; }
+    .project-status { font-size: 10px; font-family: 'JetBrains Mono', monospace; padding: 3px 8px; border-radius: 4px; font-weight: 500; }
+    .status-done { background: rgba(52,211,153,0.12); color: var(--accent3); border: 1px solid rgba(52,211,153,0.25); }
+    .status-wip  { background: rgba(251,191,36,0.1); color: #fbbf24; border: 1px solid rgba(251,191,36,0.2); }
+    .project-name { font-weight: 600; font-size: 15px; margin-bottom: 8px; }
+    .project-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
+    .project-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 14px; }
+
+    /* ─── SKILLS ─── */
+    .skills-group { margin-bottom: 28px; }
+    .skills-group-title { font-size: 13px; font-weight: 600; color: var(--accent2); margin-bottom: 14px; letter-spacing: 0.04em; }
+    .skill-chips { display: flex; gap: 10px; flex-wrap: wrap; }
+    .skill-chip {
+      font-size: 13px; font-family: 'JetBrains Mono', monospace;
+      padding: 7px 16px; border-radius: 8px;
+      background: var(--glass); border: 1px solid var(--glass-border); color: var(--muted);
+      transition: color .2s, border-color .2s, background .2s;
+    }
+    .skill-chip:hover { color: var(--text); border-color: rgba(255,255,255,0.25); background: var(--glass-hover); }
+
+    /* ─── CONTACT ─── */
+    .contact-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media(max-width:540px){ .contact-wrap { grid-template-columns: 1fr; } }
+    .contact-item {
+      padding: 20px 24px; display: flex; align-items: center; gap: 16px;
+      text-decoration: none; color: var(--text);
+      transition: border-color .2s, background .2s;
+    }
+    .contact-item:hover { border-color: var(--accent); background: rgba(56,189,248,0.06); }
+    .contact-icon { font-size: 24px; flex-shrink: 0; }
+    .contact-label { font-size: 12px; color: var(--muted); margin-bottom: 2px; }
+    .contact-value { font-size: 14px; font-weight: 500; }
+
+    /* ─── FOOTER ─── */
+    footer { text-align: center; padding: 40px 24px 24px; color: var(--muted); font-size: 13px; }
+    footer a { color: var(--accent); text-decoration: none; }
+
+    /* ─── SCROLL ANIMATIONS ─── */
+    .fade-up {
+      opacity: 0; transform: translateY(24px);
+      transition: opacity .6s ease, transform .6s ease;
+    }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+
+<div class="bg-orbs">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+  <div class="orb orb4"></div>
+</div>
+
+<nav>
+  <a href="#sobre">Sobre</a>
+  <a href="#experiencia">Experiência</a>
+  <a href="#projetos">Projetos</a>
+  <a href="#habilidades">Skills</a>
+  <a href="#contato">Contato</a>
+</nav>
+
+<main>
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-inner fade-up">
+      <div class="avatar-wrap">
+        <div class="avatar-ring">
+          <img src="Eduardo.jpg">
+        </div>
+        <div class="status-dot" title="Disponível"></div>
+      </div>
+      <h1 class="hero-name">Carlos Eduardo<br>Rodrigues Ferreira</h1>
+      <p class="hero-role"><span>$</span> TI Suporte &amp; Infraestrutura</p>
+      <p class="hero-desc">
+        Técnico de TI em Fortaleza-CE, cursando Engenharia da Computação.<br>
+        Focado em infraestrutura, redes, automação e segurança.
+      </p>
+      <div class="pill-row">
+        <span class="pill">Windows Server</span>
+        <span class="pill">MikroTik</span>
+        <span class="pill">Zabbix</span>
+        <span class="pill">ESXI</span>
+        <span class="pill">PowerShell</span>
+        <span class="pill">Python</span>
+      </div>
+      <div class="socials">
+        <a class="social-btn" href="https://github.com/Forevit" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.1 3.29 9.42 7.86 10.95.57.1.78-.25.78-.55v-1.94C6.15 21 5.5 19 5.5 19c-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.02 1.75 2.68 1.24 3.33.95.1-.74.4-1.24.73-1.53-2.55-.29-5.23-1.27-5.23-5.67 0-1.25.45-2.27 1.18-3.07-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.15 1.18a10.94 10.94 0 0 1 5.72 0C17.04 5.18 18 5.49 18 5.49c.62 1.58.23 2.75.11 3.04.74.8 1.18 1.82 1.18 3.07 0 4.41-2.69 5.38-5.25 5.66.41.36.78 1.07.78 2.15v3.19c0 .3.2.66.79.55C20.21 21.41 23.5 17.1 23.5 12 23.5 5.65 18.35.5 12 .5z"/></svg>
+          GitHub
+        </a>
+        <a class="social-btn" href="https://www.linkedin.com/in/carloseduardorodriguesferreira/" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.36V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.3zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>
+          LinkedIn
+        </a>
+        <a class="social-btn" href="mailto:carlosferreira2@aluno.uniateneu.edu.br">
+          <svg viewBox="0 0 24 24"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/></svg>
+          E-mail
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- SOBRE -->
+  <section id="sobre">
+    <p class="section-label fade-up">// 01</p>
+    <h2 class="section-title fade-up">Sobre mim</h2>
+    <div class="card about-card fade-up">
+      <p>
+        Olá! Sou Eduardo, técnico de Suporte Jr. em Fortaleza-CE. Atuo na <strong style="color:var(--text)">Paerro Tecnologia</strong> desde novembro de 2024, 
+        prestando suporte presencial e remoto a clientes corporativos — administrando ambientes Windows, MikroTik, 
+        monitoramento Zabbix. 
+        Antes, trabalhei como aprendiz de TI na <strong style="color:var(--text)">Eletra Energy Solutions</strong> de jun/23 até set/24.
+      </p>
+      <p style="margin-top:16px">
+        Estou no 6º semestre de Engenharia da Computação na <strong style="color:var(--text)">UniAteneu</strong> e 
+        invisto tempo em projetos de homelab — virtualização com ESXi, automação com PowerShell e Python, 
+        e redes. Minha área de interesse crescente é infraestrutura e automação de TI.
+      </p>
+      <div class="about-grid">
+        <div class="about-stat">
+          <div class="about-stat-num">6°</div>
+          <div class="about-stat-label">Semestre — Eng. Computação</div>
+        </div>
+        <div class="about-stat">
+          <div class="about-stat-num">2+</div>
+          <div class="about-stat-label">Anos de experiência em TI</div>
+        </div>
+        <div class="about-stat">
+          <div class="about-stat-num">Fortaleza</div>
+          <div class="about-stat-label">Ceará, Brasil</div>
+        </div>
+        <div class="about-stat">
+          <div class="about-stat-num">Infra</div>
+          <div class="about-stat-label">Foco em infraestrutura e redes</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPERIÊNCIA -->
+  <section id="experiencia">
+    <p class="section-label fade-up">// 02</p>
+    <h2 class="section-title fade-up">Experiência</h2>
+    <div class="timeline">
+      <div class="card job-card fade-up">
+        <div class="job-top">
+          <span class="job-title">Técnico de TI Jr.</span>
+          <span class="job-period">Nov 2024 — Atual</span>
+        </div>
+        <div class="job-company">Paerro Tecnologia · Fortaleza, CE</div>
+        <p class="job-desc">
+          Suporte técnico presencial e remoto a clientes corporativos. Administração de ambientes Windows 
+          com Active Directory, Group Policy. Configuração e manutenção de roteadores MikroTik 
+          (incluindo VPN WireGuard). Monitoramento de infraestrutura com Zabbix. Automação de manutenção preventiva com PowerShell.
+        </p>
+        <div class="job-tags">
+          <span class="tag">Windows Server</span><span class="tag">Active Directory</span>
+          <span class="tag">MikroTik</span><span class="tag">Zabbix</span>
+          <span class="tag">HikCentral</span><span class="tag">PowerShell</span><span class="tag">WireGuard</span>
+        </div>
+      </div>
+
+      <div class="card job-card fade-up">
+        <div class="job-top">
+          <span class="job-title">Aprendiz de TI</span>
+          <span class="job-period">~2023 — 2024</span>
+        </div>
+        <div class="job-company">Eletra Energy Solutions · Fortaleza, CE</div>
+        <p class="job-desc">
+          Suporte técnico interno, manutenção de hardware e software, atendimento de chamados e 
+          auxílio na infraestrutura de TI da empresa. Primeiro contato com ambientes corporativos 
+          e gestão de ativos de TI.
+        </p>
+        <div class="job-tags">
+          <span class="tag">Suporte Técnico</span><span class="tag">Help Desk</span>
+          <span class="tag">Hardware</span><span class="tag">Windows</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJETOS -->
+  <section id="projetos">
+    <p class="section-label fade-up">// 03</p>
+    <h2 class="section-title fade-up">Projetos</h2>
+    <div class="projects-grid">
+
+      <div class="card project-card fade-up">
+        <div class="project-header">
+          <span class="project-icon">🖥️</span>
+          <span class="project-status status-done">Concluído</span>
+        </div>
+        <div class="project-name">Active Directory — Windows Server 2022</div>
+        <p class="project-desc">Lab completo de AD DS com criação de OUs, usuários, grupos e aplicação de Group Policies em ambiente virtualizado.</p>
+        <div class="project-tags">
+          <span class="tag">Windows Server</span><span class="tag">AD DS</span><span class="tag">GPO</span><span class="tag">Hyper-V</span>
+        </div>
+      </div>
+
+      <div class="card project-card fade-up">
+        <div class="project-header">
+          <span class="project-icon">📡</span>
+          <span class="project-status status-done">Concluído</span>
+        </div>
+        <div class="project-name">Infraestrutura de Redes — Packet Tracer</div>
+        <p class="project-desc">Topologia corporativa com VLANs, roteamento inter-VLAN, DHCP, NAT e ACLs simulada no Cisco Packet Tracer.</p>
+        <div class="project-tags">
+          <span class="tag">Cisco</span><span class="tag">VLAN</span><span class="tag">OSPF</span><span class="tag">NAT</span>
+        </div>
+      </div>
+
+      <div class="card project-card fade-up">
+        <div class="project-header">
+          <span class="project-icon">🏠</span>
+          <span class="project-status status-wip">Em andamento</span>
+        </div>
+        <div class="project-name">Homelab — ESXi 7.0</div>
+        <p class="project-desc">Servidor com ESXi 7.0 U3. Planejamento de layout de discos, redes internas e upgrade path para Proxmox.</p>
+        <div class="project-tags">
+          <span class="tag">ESXi</span><span class="tag">Supermicro</span><span class="tag">Virtualização</span>
+        </div>
+      </div>
+
+      <div class="card project-card fade-up">
+        <div class="project-header">
+          <span class="project-icon">📊</span>
+          <span class="project-status status-done">Concluído</span>
+        </div>
+        <div class="project-name">Preventiva Corporativa — PowerShell</div>
+        <p class="project-desc">Script de manutenção preventiva trimestral com TUI interativo, modo dry-run, runspaces paralelos e credenciais seguras.</p>
+        <div class="project-tags">
+          <span class="tag">PowerShell</span><span class="tag">Automação</span><span class="tag">TUI</span>
+        </div>
+      </div>
+
+      <div class="card project-card fade-up">
+        <div class="project-header">
+          <span class="project-icon">🔗</span>
+          <span class="project-status status-done">Concluído</span>
+        </div>
+        <div class="project-name">VPN WireGuard — MikroTik</div>
+        <p class="project-desc">Configuração de peer WireGuard em roteador MikroTik para acesso remoto seguro a redes de clientes corporativos.</p>
+        <div class="project-tags">
+          <span class="tag">WireGuard</span><span class="tag">MikroTik</span><span class="tag">RouterOS</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- HABILIDADES -->
+  <section id="habilidades">
+    <p class="section-label fade-up">// 04</p>
+    <h2 class="section-title fade-up">Habilidades Técnicas</h2>
+    <div class="card fade-up" style="padding: 28px 32px;">
+
+      <div class="skills-group">
+        <div class="skills-group-title">Sistemas &amp; Redes</div>
+        <div class="skill-chips">
+          <span class="skill-chip">Windows Server</span>
+          <span class="skill-chip">Active Directory</span>
+          <span class="skill-chip">Group Policy</span>
+          <span class="skill-chip">MikroTik</span>
+          <span class="skill-chip">RouterOS</span>
+          <span class="skill-chip">TCP/IP</span>
+          <span class="skill-chip">VLAN</span>
+          <span class="skill-chip">WireGuard</span>
+        </div>
+      </div>
+
+      <div class="skills-group">
+        <div class="skills-group-title">Virtualização &amp; Infraestrutura</div>
+        <div class="skill-chips">
+          <span class="skill-chip">VMware ESXi</span>
+          <span class="skill-chip">VirtualBox</span>
+          <span class="skill-chip">Zabbix</span>
+        </div>
+      </div>
+
+      <div class="skills-group">
+        <div class="skills-group-title">Automação &amp; Scripting</div>
+        <div class="skill-chips">
+          <span class="skill-chip">PowerShell</span>
+          <span class="skill-chip">Python</span>
+          <span class="skill-chip">Bash</span>
+          <span class="skill-chip">Git</span>
+        </div>
+      </div>
+
+      <div class="skills-group" style="margin-bottom:0">
+        <div class="skills-group-title">Certificações &amp; Cursos</div>
+        <div class="skill-chips">
+          <span class="skill-chip">Introduction to CyberSecurity · Cisco</span>
+          <span class="skill-chip">Networking Basics · Cisco</span>
+          <span class="skill-chip">Linux Essentials · LinuxTips</span>
+          <span class="skill-chip">Cybersecurity Simulation · Mastercard</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CONTATO -->
+  <section id="contato">
+    <p class="section-label fade-up">// 05</p>
+    <h2 class="section-title fade-up">Contato</h2>
+    <div class="contact-wrap fade-up">
+      <a class="card contact-item" href="https://github.com/Forevit" target="_blank" rel="noopener">
+        <span class="contact-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.1 3.29 9.42 7.86 10.95.57.1.78-.25.78-.55v-1.94C6.15 21 5.5 19 5.5 19c-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.02 1.75 2.68 1.24 3.33.95.1-.74.4-1.24.73-1.53-2.55-.29-5.23-1.27-5.23-5.67 0-1.25.45-2.27 1.18-3.07-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.15 1.18a10.94 10.94 0 0 1 5.72 0C17.04 5.18 18 5.49 18 5.49c.62 1.58.23 2.75.11 3.04.74.8 1.18 1.82 1.18 3.07 0 4.41-2.69 5.38-5.25 5.66.41.36.78 1.07.78 2.15v3.19c0 .3.2.66.79.55C20.21 21.41 23.5 17.1 23.5 12 23.5 5.65 18.35.5 12 .5z"/></svg>
+        </span>
+        <div>
+          <div class="contact-label">GitHub</div>
+          <div class="contact-value">github.com/Forevit</div>
+        </div>
+      </a>
+      <a class="card contact-item" href="https://www.linkedin.com/in/carloseduardorodriguesferreira/" target="_blank" rel="noopener">
+        <span class="contact-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.36V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.3zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>
+        </span>
+        <div>
+          <div class="contact-label">LinkedIn</div>
+          <div class="contact-value">Eduardo Ferreira</div>
+        </div>
+      </a>
+      <a class="card contact-item" href="mailto:carlosferreira2@aluno.uniateneu.edu.br">
+        <span class="contact-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/></svg>
+        </span>
+        <div>
+          <div class="contact-label">E-mail institucional</div>
+          <div class="contact-value">carlosferreira2@aluno.uniateneu.edu.br</div>
+        </div>
+      </a>
+      <div class="card contact-item" style="cursor:default">
+        <span class="contact-icon">📍</span>
+        <div>
+          <div class="contact-label">Localização</div>
+          <div class="contact-value">Fortaleza, Ceará — Brasil</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p>Desenvolvido por <a href="#">Eduardo Ferreira</a> · © 2026</p>
+</footer>
+
+<script>
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        const delay = (i * 80);
+        setTimeout(() => e.target.classList.add('visible'), delay);
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
